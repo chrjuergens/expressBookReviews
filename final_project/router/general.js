@@ -32,53 +32,66 @@ public_users.post("/register", (req,res) => {
 // Get the book list available in the shop using Promise callbacks
 public_users.get('/',function (req, res) {
   //try {
-    const books_to_string = (books) => {
+    const fetch_books = (books) => {
       return new Promise((resolve, reject) => {
         try {
-          resolve(JSON.stringify(books));
+          resolve(books);
         } catch(err) {
           reject();
         }
       })
     }
-    books_to_string(books).then((result) => res.send(result)).then(() => console.log("Books send!"));
+    fetch_books(books).then((result) => JSON.stringify(result)).then((result) => res.send(result));
 });
 
 // Get book details based on ISBN
 public_users.get('/isbn/:isbn',function (req, res) {
   const isbn = req.params.isbn;
-  return res.send(JSON.stringify(books[isbn]));
-  //Write your code here
-  //return res.status(300).json({message: "Yet to be implemented"});
- });
+  const get_book_by_isbn = (isbn) => {
+    return new Promise((resolve, reject) => {
+      if (isbn in books) {
+        resolve(books[isbn]);
+      } else {
+        reject();
+      }
+    })
+  }
+  get_book_by_isbn(isbn).then((result) => JSON.stringify(result)).then((result) => {res.send(result);});
+});
   
 // Get book details based on author
 public_users.get('/author/:author',function (req, res) {
   const author = req.params.author.replace("+", " ");
-  let books_by_author = [];
-  for (key in books) {
-    if (books[key]["author"] == author) {
-      books_by_author.push(books[key]);
-    }
+  const books_by_author = (author) => {
+    return new Promise((resolve, reject) => {
+      let books_by_author = [];
+      for (key in books) {
+        if (books[key]["author"] == author) {
+          books_by_author.push(books[key]);
+        }
+      }
+      resolve(books_by_author);
+    })
   }
-  return res.send(JSON.stringify(books_by_author));
-  //Write your code here
-  //return res.status(300).json({message: "Yet to be implemented"});
+  books_by_author(author).then((result) => JSON.stringify(result)).then((result) => res.send(result));
 });
 
 // Get all books based on title
 public_users.get('/title/:title',function (req, res) {
   const regex = new RegExp(/\+/g);
   const title = req.params.title.replace(regex, ' ');
-  let books_by_title = [];
-  for (key in books) {
-    if (books[key]["title"] == title) {
-      books_by_title.push(books[key]);
-    }
+  const books_by_title = (title) => {
+    return new Promise((resolve, reject) => {
+      let books_by_title = [];
+      for (key in books) {
+        if (books[key]["title"] == title) {
+          books_by_title.push(books[key]);
+        }
+      }
+      resolve(books_by_title);
+    })
   }
-  return res.send(JSON.stringify(books_by_title));
-  //Write your code here
-  //return res.status(300).json({message: "Yet to be implemented"});
+  books_by_title(title).then((result) => JSON.stringify(result)).then((result) => res.send(result));
 });
 
 //  Get book review
