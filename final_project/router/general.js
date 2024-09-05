@@ -29,11 +29,19 @@ public_users.post("/register", (req,res) => {
   //return res.status(300).json({message: "Yet to be implemented"});
 });
 
-// Get the book list available in the shop
+// Get the book list available in the shop using Promise callbacks
 public_users.get('/',function (req, res) {
-  return res.send(JSON.stringify(books));
-  //Write your code here
-  //return res.status(300).json({message: "Yet to be implemented"});
+  //try {
+    const books_to_string = (books) => {
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(JSON.stringify(books));
+        } catch(err) {
+          reject();
+        }
+      })
+    }
+    books_to_string(books).then((result) => res.send(result)).then(() => console.log("Books send!"));
 });
 
 // Get book details based on ISBN
