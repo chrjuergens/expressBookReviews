@@ -28,21 +28,30 @@ public_users.get('/isbn/:isbn',function (req, res) {
 // Get book details based on author
 public_users.get('/author/:author',function (req, res) {
   const author = req.params.author.replace("+", " ");
-  let booky_by_author = [];
+  let books_by_author = [];
   for (key in books) {
     if (books[key]["author"] == author) {
-      booky_by_author.push(books[key]);
+      books_by_author.push(books[key]);
     }
   }
-  return res.send(JSON.stringify(booky_by_author));
+  return res.send(JSON.stringify(books_by_author));
   //Write your code here
   //return res.status(300).json({message: "Yet to be implemented"});
 });
 
 // Get all books based on title
 public_users.get('/title/:title',function (req, res) {
+  const regex = new RegExp(/\+/g);
+  const title = req.params.title.replace(regex, ' ');
+  let books_by_title = [];
+  for (key in books) {
+    if (books[key]["title"] == title) {
+      books_by_title.push(books[key]);
+    }
+  }
+  return res.send(JSON.stringify(books_by_title));
   //Write your code here
-  return res.status(300).json({message: "Yet to be implemented"});
+  //return res.status(300).json({message: "Yet to be implemented"});
 });
 
 //  Get book review
